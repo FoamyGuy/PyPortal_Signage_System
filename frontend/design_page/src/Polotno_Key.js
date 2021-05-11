@@ -1,1 +1,1 @@
-const polotno_key = "qvI3v2Zp96rXwhTpt-2z";
+export const polotno_key = "qvI3v2Zp96rXwhTpt-2z";
