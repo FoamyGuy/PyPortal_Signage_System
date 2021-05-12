@@ -46,6 +46,7 @@ class CreatePlanView(View):
 
         new_plan = Plan(name="Posted Plan")
         new_plan.content_image.save('temp.bmp', File(blob), save=True)
+        new_plan.user = request.user
 
         new_plan.content_json = json_data
 
@@ -54,6 +55,12 @@ class CreatePlanView(View):
 
 class UpdatePlanView(View):
     def post(self, request, plan_id):
+
+        try:
+            plan = Plan.objects.get(id=plan_id, user=request.user)
+        except Plan.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Plan not found"})
+
         json_data = request.POST.get("json")
         print(json_data)
         format, imgstr = request.POST.get("image_base64").split(';base64,')
@@ -66,7 +73,7 @@ class UpdatePlanView(View):
 
         #content_image = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)  # You can save this as file instance.
 
-        plan = Plan.objects.get(id=plan_id)
+
         plan.content_json = json_data
         file_name = plan.content_image.name.split("/")[-1]
         print("filename: {}".format(file_name))

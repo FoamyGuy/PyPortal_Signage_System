@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.urls import path, include
 from rest_framework import routers
 
@@ -11,8 +12,8 @@ router.register(r'plans', views.PlanView, 'plan')
 
 urlpatterns = [
     path('api/', include(router.urls)),
-    path('create_plan/', views.CreatePlanView.as_view(), name='create_plan'),
-    path('update/plan/<int:plan_id>/', UpdatePlanView.as_view(), name='plan'),
+    path('create_plan/', login_required(views.CreatePlanView.as_view()), name='create_plan'),
+    path('update/plan/<int:plan_id>/', login_required(UpdatePlanView.as_view()), name='plan'),
 
 
 ]

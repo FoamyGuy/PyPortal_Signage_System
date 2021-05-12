@@ -62,7 +62,6 @@ class App extends React.Component {
             }
         }
 
-
         //store.addPage();
 
         setTimeout(function () {
@@ -87,7 +86,7 @@ class App extends React.Component {
         this.sections.splice(1, 0, CustomPhotos);
 
         PhotosSection.Tab = (props) => (
-            <SectionTab name="External Photos" {...props}>
+            <SectionTab name="Unsplash" {...props}>
                 <Icon icon="media"/>
             </SectionTab>
         );
@@ -99,6 +98,7 @@ class App extends React.Component {
     }
 
     render() {
+
         return (
             <React.Fragment>
                 <Topbar store={this.store} clickSave={this.clickSave}/>
@@ -110,7 +110,7 @@ class App extends React.Component {
                     }}
                 >
                     <div style={{width: '400px', height: '100%', display: 'flex'}}>
-                        <SidePanel store={this.store} sections={this.sections}/>
+                        <SidePanel store={this.store} sections={this.sections} defaultSection="adafruit"/>
                     </div>
                     <div
                         style={{
@@ -164,6 +164,7 @@ class App extends React.Component {
                     "json": JSON.stringify(this.store.toJSON())
                 }
             }).done(function (resp) {
+
                 console.log(resp);
             });
         } else {
