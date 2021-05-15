@@ -25,6 +25,15 @@ class App extends React.Component {
             key: polotno_key, // you can create it here: https://polotno.dev/cabinet/
         });
         this.store.setSize(320, 240);
+
+        this.state = {
+            feedback: "Plan Saved",
+            feedbackIntent: "success",
+            hidden: true
+        }
+
+
+
     }
 
     componentDidMount() {
@@ -49,20 +58,34 @@ class App extends React.Component {
 
 
         console.log(this.input_data);
-        if (this.input_data !== undefined) {
-            if (this.input_data.data.hasOwnProperty("plan_json")) {
-                //console.log(input_data.data.plan_json);
+        if (this.input_data !== undefined &&
+            this.input_data.data.hasOwnProperty("plan_json")) {
 
-                console.log(this.store.activePage);
+            //console.log(input_data.data.plan_json);
 
-                // load page from context
-                this.store.loadJSON(JSON.parse(this.input_data.data.plan_json));
-                console.dir(this.store.pages);
-                console.log(this.store.activePage.id);
-            }
+            console.log(this.store.activePage);
+
+            // load page from context
+            this.store.loadJSON(JSON.parse(this.input_data.data.plan_json));
+            console.dir(this.store.pages);
+            console.log(this.store.activePage.id);
+        } else{
+            // empty page if nothing to load
+            this.store.addPage();
         }
 
-        //store.addPage();
+
+
+        //this.store.setScale(3);
+        //console.log('zoom is', this.store.scale);
+        setInterval(() => {
+            console.log('zoom is', this.store.scale);
+        }, 2000);
+
+        setTimeout(() => {
+            this.store.setScale(1.5);
+        }, 300);
+
 
         setTimeout(function () {
             $(".credit span a").attr("target", "_blank");
@@ -101,7 +124,11 @@ class App extends React.Component {
 
         return (
             <React.Fragment>
-                <Topbar store={this.store} clickSave={this.clickSave}/>
+                <Topbar store={this.store}
+                        clickSave={this.clickSave}
+                        hidden={this.state.hidden}
+                        feedbackIntent={this.state.feedbackIntent}
+                        feedback={this.state.feedback}/>
                 <div
                     style={{
                         display: 'flex',
@@ -147,7 +174,7 @@ class App extends React.Component {
         return cookieValue;
     }
 
-    clickSave() {
+    clickSave = () => {
         //console.log(props.hello);
         //console.dir(store);
         console.log("clicked save");
@@ -156,6 +183,8 @@ class App extends React.Component {
 
         // create new plan
         if (this.input_data === undefined || !this.input_data.data.hasOwnProperty("id")) {
+            //this.topBar.current.setState({"hidden": false, "feedback": "Hello World", "feedbackIntent": "danger"});
+            //this.setState({hidden: false})
             $.ajax({
                 method: "POST",
                 url: "/create_plan/",
@@ -163,9 +192,15 @@ class App extends React.Component {
                     "image_base64": this.store.toDataURL(),
                     "json": JSON.stringify(this.store.toJSON())
                 }
-            }).done(function (resp) {
-
+            }).done((resp) => {
+                this.setState({hidden: false, feedbackIntent: "success", feedback: "Plan created successfully"});
+                setTimeout(() => {
+                    this.setState({hidden: true});
+                    window.location = resp
+                }, 3000);
                 console.log(resp);
+            }).fail((error) => {
+                this.setState({hidden: false, feedbackIntent: "danger", feedback: error.responseJSON.error});
             });
         } else {
             // update existing plan

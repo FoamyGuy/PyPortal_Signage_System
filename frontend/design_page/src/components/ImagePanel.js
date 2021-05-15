@@ -21,10 +21,10 @@ const PhotosPanel = observer(({store}) => {
 
         const image_objs = [];
         for (let i = 0; i < preloaded_images.length; i++){
-            console.log(preloaded_images[i]);
+            //console.log(preloaded_images[i]);
             image_objs.push({url: `/static/img/adafruit_${preloaded_images[i]}_emoji.png`});
         }
-        console.log(image_objs);
+        //console.log(image_objs);
         setImages(image_objs);
     }
 

@@ -12,7 +12,7 @@ from backend.models import Plan
 
 class IndexView(View):
     def get(self, request):
-        return HttpResponse("Index")
+        return render(request, "frontend/front_page/index.html", {})
 
 
 class CreatePlanView(View):

@@ -6,6 +6,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 # Create your views here.
+from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -30,6 +31,8 @@ class CreatePlanView(View):
 
         #name = request.POST.get("name")
         json_data = request.POST.get("json")
+        if not json_data:
+            return JsonResponse({"success": False, "error": "Missing parameter json"}, status=400)
         print(json_data)
         format, imgstr = request.POST.get("image_base64").split(';base64,')
         ext = format.split('/')[-1]
@@ -51,7 +54,7 @@ class CreatePlanView(View):
         new_plan.content_json = json_data
 
         new_plan.save()
-        return JsonResponse({"success": True})
+        return JsonResponse({"success": True, "view_plan_url": reverse("frontend:plan", kwargs={"plan_id": new_plan.id})})
 
 class UpdatePlanView(View):
     def post(self, request, plan_id):
